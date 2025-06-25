@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMI VIỆT NAM - Hệ thống tra cứu bảo hành Smart Home</title>
+    <meta name="description" content="Tra cứu tình trạng bảo hành sản phẩm Smart Home LUMI một cách nhanh chóng và tiện lợi">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-icon">💡</div>
+                <div class="logo-text">
+                    <h1>LUMI VIỆT NAM</h1>
+                    <p>Hệ thống tra cứu bảo hành Smart Home</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary" id="adminBtn">
+                ⚙️ Quản trị
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                ✨ Tra cứu bảo hành Lumi Smart Home
+            </div>
+            <h1 class="hero-title">
+                Kiểm tra tình trạng
+                <br>
+                <span class="text-lumi">bảo hành sản phẩm</span>
+            </h1>
+            <p class="hero-subtitle">
+                Nhập mã vận đơn Viettel Post để kiểm tra tình trạng bảo hành sản phẩm 
+            </p>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-wrapper">
+                <div class="search-glow"></div>
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput"
+                        placeholder="Nhập mã vận đơn Viettel Post"
+                        autocomplete="off"
+                    >
+                    <button type="button" class="btn btn-primary search-button" id="searchBtn" disabled>
+                <span class="search-button-content">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-text">Tra cứu</span>
+                </span>
+            </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading-container hidden" id="loadingState">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Đang tìm kiếm sản phẩm...</p>
+        </div>
+
+        <!-- Search Result -->
+        <section class="result-card hidden" id="searchResult">
+            <!-- Content will be dynamically generated -->
+        </section>
+
+        <!-- No Results -->
+        <div class="no-results hidden" id="noResults">
+            <div class="no-results-icon">📦</div>
+            <h3 class="no-results-title">Không tìm thấy sản phẩm</h3>
+            <p class="no-results-description">
+                Không tìm thấy sản phẩm với mã: <strong id="searchTerm"></strong>
+            </p>
+            <p class="no-results-suggestion">Vui lòng kiểm tra lại mã vận đơn hoặc mã sản phẩm</p>
+            <button class="btn btn-secondary" id="tryAgainBtn">Thử lại</button>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">Tra cứu nhanh chóng</h3>
+                <p class="feature-description">
+                    Chỉ cần nhập mã vận đơn để biết ngay tình trạng bảo hành sản phẩm Smart Home của bạn
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon feature-icon-blue">📶</div>
+                <h3 class="feature-title">Cập nhật realtime</h3>
+                <p class="feature-description">
+                    Thông tin được cập nhật liên tục theo thời gian thực từ hệ thống quản lý
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon feature-icon-purple">🛡️</div>
+                <h3 class="feature-title">Bảo mật cao</h3>
+                <p class="feature-description">
+                    Thông tin được bảo mật và chỉ hiển thị cho người có quyền truy cập hợp lệ
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="footer-logo-icon">💡</div>
+                <h2 class="footer-title">LUMI VIỆT NAM</h2>
+            </div>
+
+            <p class="footer-description">Hệ thống quản lý bảo hành Smart Home hàng đầu Việt Nam</p>
+
+            <div class="footer-features">
+                <div class="footer-feature">✓ Tra cứu nhanh chóng</div>
+                <div class="footer-feature">✓ Thông tin chi tiết</div>
+                <div class="footer-feature">✓ Hỗ trợ 24/7</div>
+                <div class="footer-feature">✓ Bảo mật cao</div>
+            </div>
+
+            <div class="footer-author">
+                <div class="author-info">
+                    👤 Tác giả: Trần Minh Thương
+                </div>
+                <div class="department-info">
+                    🏢 Bộ phận T&S Miền Nam
+                </div>
+            </div>
+
+            <p class="footer-copyright">© 2024 Lumi Việt Nam. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Admin Login Modal -->
+    <div class="modal-overlay hidden" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    🛡️
+                    <div>
+                        <h2>Đăng nhập Admin</h2>
+                        <p>Chỉ dành cho quản trị viên hệ thống</p>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeModal">❌</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminForm">
+                    <div class="form-group">
+                        <label for="adminEmail">🔒 Email</label>
+                        <input type="email" id="adminEmail" placeholder="admin@lumi.vn" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Mật khẩu</label>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required>
+                    </div>
+                    <div class="error-message hidden" id="loginError"></div>
+                    <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
+                </form>
+                <div class="demo-info">
+                    <p><strong>Demo account:</strong></p>
+                    <p><strong>Email:</strong> admin@lumi.vn</p>
+                    <p><strong>Password:</strong> admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel hidden" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-logo">
+                <div class="admin-logo-icon">🛡️</div>
+                <div>
+                    <h1>Admin Panel</h1>
+                    <p>Quản lý hệ thống bảo hành</p>
+                </div>
+            </div>
+            <div class="admin-actions">
+                <button class="btn btn-primary" id="addProductBtn">
+                    ➕ Thêm sản phẩm
+                </button>
+                <button class="btn btn-secondary" id="logoutBtn">
+                    🚪 Đăng xuất
+                </button>
+            </div>
+        </div>
+
+        <div class="admin-stats">
+            <div class="stat-card stat-total">
+                <div class="stat-icon">📦</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalProducts">0</div>
+                    <div class="stat-label">Tổng sản phẩm</div>
+                </div>
+            </div>
+            <div class="stat-card stat-pending">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="pendingProducts">0</div>
+                    <div class="stat-label">Chưa sửa</div>
+                </div>
+            </div>
+            <div class="stat-card stat-progress">
+                <div class="stat-icon">⚙️</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="progressProducts">0</div>
+                    <div class="stat-label">Đang sửa</div>
+                </div>
+            </div>
+            <div class="stat-card stat-completed">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="completedProducts">0</div>
+                    <div class="stat-label">Hoàn thành</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-content">
+            <div class="admin-filters">
+                <input type="text" class="filter-input" id="adminSearch" placeholder="Tìm kiếm sản phẩm...">
+                <select class="filter-select" id="statusFilter">
+                    <option value="all">Tất cả trạng thái</option>
+                    <option value="not-started">Chưa sửa</option>
+                    <option value="in-progress">Đang sửa</option>
+                    <option value="completed">Đã sửa xong</option>
+                </select>
+                <select class="filter-select" id="distributorFilter">
+                    <option value="all">Tất cả nhà phân phối</option>
+                    <option value="CTY CỔ PHẦN TẬP ĐOÀN ĐẦU TƯ KOB AN CƯ">CTY CỔ PHẦN TẬP ĐOÀN ĐẦU TƯ KOB AN CƯ</option>
+                    <option value="CTY CP LUMI MIỀN NAM">CTY CP LUMI MIỀN NAM</option>
+                    <option value="CTY CP CÔNG NGHỆ THÔNG MINH THIÊN ÂN">CTY CP CÔNG NGHỆ THÔNG MINH THIÊN ÂN</option>
+                    <option value="Công ty TNHH Minh Trúc Home">Công ty TNHH Minh Trúc Home</option>
+                    <option value="CTY TNHH KIẾN TRÚC XÂY DỰNG PHÁT TRIỂN ĐỊA ỐC HOÀNG GIA">CTY TNHH KIẾN TRÚC XÂY DỰNG PHÁT TRIỂN ĐỊA ỐC HOÀNG GIA</option>
+                    <option value="CTY TNHH MỘT THÀNH VIÊN 836">CTY TNHH MỘT THÀNH VIÊN 836</option>
+                    <option value="CTY TNHH DV CÔNG NGHỆ MLV SMART">CTY TNHH DV CÔNG NGHỆ MLV SMART</option>
+                    <option value="CTY TNHH MỘT THÀNH VIÊN THƯƠNG MẠI XÂY DỰNG TRẦN THÀNH">CTY TNHH MỘT THÀNH VIÊN THƯƠNG MẠI XÂY DỰNG TRẦN THÀNH</option>
+                    <option value="CTY TNHH CÔNG NGHỆ THÔNG MINH NHÀ AN NHIÊN">CTY TNHH CÔNG NGHỆ THÔNG MINH NHÀ AN NHIÊN</option>
+                    <option value="CTY TNHH CÔNG NGHỆ ĐIỆN THÔNG MINH HOÀNG PHÁT">CTY TNHH CÔNG NGHỆ ĐIỆN THÔNG MINH HOÀNG PHÁT</option>
+                    <option value="CTY TNHH ĐIỆN NƯỚC ĐỒNG PHÁT">CTY TNHH ĐIỆN NƯỚC ĐỒNG PHÁT</option>
+                    <option value="Cty TNHH CÔNG NGHỆ MEKOTECH">Cty TNHH CÔNG NGHỆ MEKOTECH</option>
+                    <option value="CTY TNHH DỊCH VỤ THÔNG TIN VÀ GIẢI PHÁP CÔNG NGHỆ TDL">CTY TNHH DỊCH VỤ THÔNG TIN VÀ GIẢI PHÁP CÔNG NGHỆ TDL</option>
+                    <option value="CTY TNHH CÁP ĐIỆN XANH">CTY TNHH CÁP ĐIỆN XANH</option>
+                    <option value="CTY TNHH CÔNG NGHỆ 4TU">CTY TNHH CÔNG NGHỆ 4TU</option>
+                    <option value="CTY TNHH MỘT THÀNH VIÊN LƯU PHONG">CTY TNHH MỘT THÀNH VIÊN LƯU PHONG</option>
+                    <option value="CTY TNHH MỘT THÀNH VIÊN HOÀNG NHẬT VÂN">CTY TNHH MỘT THÀNH VIÊN HOÀNG NHẬT VÂN</option>
+                    <option value="CTY TNHH THIẾT BỊ CÔNG NGHỆ THIÊN PHÚC QUÝ">CTY TNHH THIẾT BỊ CÔNG NGHỆ THIÊN PHÚC QUÝ</option>
+                    <option value="CTY TNHH XÂY DỰNG THIẾT KẾ SMARTCITY">CTY TNHH XÂY DỰNG THIẾT KẾ SMARTCITY</option>
+                    <option value="CTY TNHH TRUYỀN THÔNG CVT">CTY TNHH TRUYỀN THÔNG CVT</option>
+                    <option value="CTY TNHH GIẢI PHÁP CÔNG NGHỆ THÔNG MINH VIỆT SUN">CTY TNHH GIẢI PHÁP CÔNG NGHỆ THÔNG MINH VIỆT SUN</option>
+                    <option value="CÔNG TY TNHH CÔNG NGHỆ PHÚ VINH IOT">CÔNG TY TNHH CÔNG NGHỆ PHÚ VINH IOT</option>
+                    <option value="CTY TNHH TƯ VẤN THƯƠNG MẠI NHÀ THÔNG MINH">CTY TNHH TƯ VẤN THƯƠNG MẠI NHÀ THÔNG MINH</option>
+                    <option value="CTY TNHH THÁI THIÊN DI">CTY TNHH THÁI THIÊN DI</option>
+                    <option value="Công ty TNHH Huy Phát">Công ty TNHH Huy Phát</option>
+                    <option value="Công ty TNHH smarthome Minh Phong">Công ty TNHH smarthome Minh Phong</option>
+                    <option value="CTY TNHH NHÀ THÔNG MINH HOMEQ">CTY TNHH NHÀ THÔNG MINH HOMEQ</option>
+                    <option value="CTY TNHH KỸ THUẬT CÔNG NGHỆ MINH ĐẠT">CTY TNHH KỸ THUẬT CÔNG NGHỆ MINH ĐẠT</option>
+                    <option value="CTY TNHH THIẾT BỊ CÔNG NGHỆ GIA BẢO">CTY TNHH THIẾT BỊ CÔNG NGHỆ GIA BẢO</option>
+                    <option value="CTY TNHH TM DV PHÚ THÁI">CTY TNHH TM DV PHÚ THÁI</option>
+                    <option value="CTY TRÁCH NHIỆM HỮU HẠN HOOMI">CTY TRÁCH NHIỆM HỮU HẠN HOOMI</option>
+                    <option value="CTY TNHH HAPPY SMARTHOME">CTY TNHH HAPPY SMARTHOME</option>
+                    <option value="Công Ty TNHH Công Nghệ Phong Nam IOT">Công Ty TNHH Công Nghệ Phong Nam IOT</option>
+                    <option value="CTY CỔ PHẦN ĐẦU TƯ XÂY DỰNG VÀ THIẾT KẾ NHÀ THÔNG MINH GIA ÂN">CTY CỔ PHẦN ĐẦU TƯ XÂY DỰNG VÀ THIẾT KẾ NHÀ THÔNG MINH GIA ÂN</option>
+                    <option value="CTY TNHH ĐỨC HÒA IOT">CTY TNHH ĐỨC HÒA IOT</option>
+                    <option value="CTY TNHH CÔNG NGHỆ ASIS">CTY TNHH CÔNG NGHỆ ASIS</option>
+                    <option value="CTY TNHH LUMI SÀI GÒN">CTY TNHH LUMI SÀI GÒN</option>
+                    <option value="CTY TNHH CÔNG NGHỆ THÔNG MINH NGỌC Hزوم">CTY TNHH CÔNG NGHỆ THÔNG MINH NGỌC HÂN</option>
+                    <option value="Gia Tuấn Technical">Gia Tuấn Technical</option>
+                    <option value="CTY TNHH MTV SẢN XUẤT THƯƠNG MẠI DỊCH VỤ TÂM PHÁT">CTY TNHH MTV SẢN XUẤT THƯƠNG MẠI DỊCH VỤ TÂM PHÁT</option>
+                    <option value="Minh Khang - Intelhouse">Minh Khang - Intelhouse</option>
+                    <option value="CTY TNHH GIẢI PHÁP NHÀ THÔNG MINH CHUYÊN NGHIỆP TOZ">CTY TNHH GIẢI PHÁP NHÀ THÔNG MINH CHUYÊN NGHIỆP TOZ</option>
+                    <option value="CTY TNHH TM DV GIẢI PHÁP IOT TƯỜNG PHÁT">CTY TNHH TM DV GIẢI PHÁP IOT TƯỜNG PHÁT</option>
+                    <option value="CTY TNHH 247 ĐỒNG THÁP">CTY TNHH 247 ĐỒNG THÁP</option>
+                    <option value="Công ty CP công nghệ xây dựng Đà Lạt">Công ty CP công nghệ xây dựng Đà Lạt</option>
+                    <option value="Hòa T&S">Hòa T&S</option>
+                    <option value="Công ty TNHH đầu tư xây dựng KING HOUSE">Công ty TNHH đầu tư xây dựng KING HOUSE</option>
+                    <option value="Anh Biên">Anh Biên</option>
+                    <option value="CT Quang Hòa Bình Phước">CT Quang Hòa Bình Phước</option>
+                    <option value="LUMI VPMN">LUMI VPMN</option>
+                    <option value="Trương Công Tín">Trương Công Tín</option>
+                    <option value="CTY TNHH ATECKCO">CTY TNHH ATECKCO</option>
+                    <option value="Hiếu Hạnh">Hiếu Hạnh</option>
+                    <option value="Tin Học Huy Bảo">Tin Học Huy Bảo</option>
+                    <option value="Lumi Hoàng Anh">Lumi Hoàng Anh</option>
+                    <option value="Kim Tiến Khang">Kim Tiến Khang</option>
+                    <option value="CTY TNHH TM-DV-TK-XD TRANG THANH">CTY TNHH TM-DV-TK-XD TRANG THANH</option>
+                    <option value="CTY TNHH Gấu Vua">CTY TNHH Gấu Vua</option>
+                </select>
+            </div>
+
+            <div class="products-list" id="productsList">
+                <!-- Products will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div class="modal-overlay hidden" id="productModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    📦
+                    <div>
+                        <h2 id="productModalTitle">Thêm sản phẩm mới</h2>
+                        <p>Nhập thông tin sản phẩm bảo hành</p>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeProductModal">❌</button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateReceived">Ngày nhận *</label>
+                            <input type="date" id="dateReceived" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productCode">Mã sản phẩm *</label>
+                            <input type="text" id="productCode" placeholder="LUMI-001" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deviceName">Tên thiết bị *</label>
+                            <input type="text" id="deviceName" placeholder="Lumi Smart Sensor Pro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="viettelCode">Mã vận đơn Viettel *</label>
+                            <div class="input-group">
+                                <input type="text" id="viettelCode" placeholder="VTP240115001" required>
+                                <button type="button" class="btn btn-secondary" id="generateCodeBtn">Tạo mã</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="distributor">Nhà phân phối *</label>
+                            <select id="distributor" required>
+                                <option value="">Chọn nhà phân phối</option>
+                                <option value="CTY CỔ PHẦN TẬP ĐOÀN ĐẦU TƯ KOB AN CƯ">CTY CỔ PHẦN TẬP ĐOÀN ĐẦU TƯ KOB AN CƯ</option>
+                                <option value="CTY CP LUMI MIỀN NAM">CTY CP LUMI MIỀN NAM</option>
+                                <option value="CTY CP CÔNG NGHỆ THÔNG MINH THIÊN ÂN">CTY CP CÔNG NGHỆ THÔNG MINH THIÊN ÂN</option>
+                                <option value="Công ty TNHH Minh Trúc Home">Công ty TNHH Minh Trúc Home</option>
+                                <option value="CTY TNHH KIẾN TRÚC XÂY DỰNG PHÁT TRIỂN ĐỊA ỐC HOÀNG GIA">CTY TNHH KIẾN TRÚC XÂY DỰNG PHÁT TRIỂN ĐỊA ỐC HOÀNG GIA</option>
+                                <option value="CTY TNHH MỘT THÀNH VIÊN 836">CTY TNHH MỘT THÀNH VIÊN 836</option>
+                                <option value="CTY TNHH DV CÔNG NGHỆ MLV SMART">CTY TNHH DV CÔNG NGHỆ MLV SMART</option>
+                                <option value="CTY TNHH MỘT THÀNH VIÊN THƯƠNG MẠI XÂY DỰNG TRẦN THÀNH">CTY TNHH MỘT THÀNH VIÊN THƯƠNG MẠI XÂY DỰNG TRẦN THÀNH</option>
+                                <option value="CTY TNHH CÔNG NGHỆ THÔNG MINH NHÀ AN NHIÊN">CTY TNHH CÔNG NGHỆ THÔNG MINH NHÀ AN NHIÊN</option>
+                                <option value="CTY TNHH CÔNG NGHỆ ĐIỆN THÔNG MINH HOÀNG PHÁT">CTY TNHH CÔNG NGHỆ ĐIỆN THÔNG MINH HOÀNG PHÁT</option>
+                                <option value="CTY TNHH ĐIỆN NƯỚC ĐỒNG PHÁT">CTY TNHH ĐIỆN NƯỚC ĐỒNG PHÁT</option>
+                                <option value="Cty TNHH CÔNG NGHỆ MEKOTECH">Cty TNHH CÔNG NGHỆ MEKOTECH</option>
+                                <option value="CTY TNHH DỊCH VỤ THÔNG TIN VÀ GIẢI PHÁP CÔNG NGHỆ TDL">CTY TNHH DỊCH VỤ THÔNG TIN VÀ GIẢI PHÁP CÔNG NGHỆ TDL</option>
+                                <option value="CTY TNHH CÁP ĐIỆN XANH">CTY TNHH CÁP ĐIỆN XANH</option>
+                                <option value="CTY TNHH CÔNG NGHỆ 4TU">CTY TNHH CÔNG NGHỆ 4TU</option>
+                                <option value="CTY TNHH MỘT THÀNH VIÊN LƯU PHONG">CTY TNHH MỘT THÀNH VIÊN LƯU PHONG</option>
+                                <option value="CTY TNHH MỘT THÀNH VIÊN HOÀNG NHẬT VÂN">CTY TNHH MỘT THÀNH VIÊN HOÀNG NHẬT VÂN</option>
+                                <option value="CTY TNHH THIẾT BỊ CÔNG NGHỆ THIÊN PHÚC QUÝ">CTY TNHH THIẾT BỊ CÔNG NGHỆ THIÊN PHÚC QUÝ</option>
+                                <option value="CTY TNHH XÂY DỰNG THIẾT KẾ SMARTCITY">CTY TNHH XÂY DỰNG THIẾT KẾ SMARTCITY</option>
+                                <option value="CTY TNHH TRUYỀN THÔNG CVT">CTY TNHH TRUYỀN THÔNG CVT</option>
+                                <option value="CTY TNHH GIẢI PHÁP CÔNG NGHỆ THÔNG MINH VIỆT SUN">CTY TNHH GIẢI PHÁP CÔNG NGHỆ THÔNG MINH VIỆT SUN</option>
+                                <option value="CÔNG TY TNHH CÔNG NGHỆ PHÚ VINH IOT">CÔNG TY TNHH CÔNG NGHỆ PHÚ VINH IOT</option>
+                                <option value="CTY TNHH TƯ VẤN THƯƠNG MẠI NHÀ THÔNG MINH">CTY TNHH TƯ VẤN THƯƠNG MẠI NHÀ THÔNG MINH</option>
+                                <option value="CTY TNHH THÁI THIÊN DI">CTY TNHH THÁI THIÊN DI</option>
+                                <option value="Công ty TNHH Huy Phát">Công ty TNHH Huy Phát</option>
+                                <option value="Công ty TNHH smarthome Minh Phong">Công ty TNHH smarthome Minh Phong</option>
+                                <option value="CTY TNHH NHÀ THÔNG MINH HOMEQ">CTY TNHH NHÀ THÔNG MINH HOMEQ</option>
+                                <option value="CTY TNHH KỸ THUẬT CÔNG NGHỆ MINH ĐẠT">CTY TNHH KỸ THUẬT CÔNG NGHỆ MINH ĐẠT</option>
+                                <option value="CTY TNHH THIẾT BỊ CÔNG NGHỆ GIA BẢO">CTY TNHH THIẾT BỊ CÔNG NGHỆ GIA BẢO</option>
+                                <option value="CTY TNHH TM DV PHÚ THÁI">CTY TNHH TM DV PHÚ THÁI</option>
+                                <option value="CTY TRÁCH NHIỆM HỮU HẠN HOOMI">CTY TRÁCH NHIỆM HỮU HẠN HOOMI</option>
+                                <option value="CTY TNHH HAPPY SMARTHOME">CTY TNHH HAPPY SMARTHOME</option>
+                                <option value="Công Ty TNHH Công Nghệ Phong Nam IOT">Công Ty TNHH Công Nghệ Phong Nam IOT</option>
+                                <option value="CTY CỔ PHẦN ĐẦU TƯ XÂY DỰNG VÀ THIẾT KẾ NHÀ THÔNG MINH GIA ÂN">CTY CỔ PHẦN ĐẦU TƯ XÂY DỰNG VÀ THIẾT KẾ NHÀ THÔNG MINH GIA ÂN</option>
+                                <option value="CTY TNHH ĐỨC HÒA IOT">CTY TNHH ĐỨC HÒA IOT</option>
+                                <option value="CTY TNHH CÔNG NGHỆ ASIS">CTY TNHH CÔNG NGHỆ ASIS</option>
+                                <option value="CTY TNHH LUMI SÀI GÒN">CTY TNHH LUMI SÀI GÒN</option>
+                                <option value="CTY TNHH CÔNG NGHỆ THÔNG MINH NGỌC HÂN">CTY TNHH CÔNG NGHỆ THÔNG MINH NGỌC HÂN</option>
+                                <option value="Gia Tuấn Technical">Gia Tuấn Technical</option>
+                                <option value="CTY TNHH MTV SẢN XUẤT THƯƠNG MẠI DỊCH VỤ TÂM PHÁT">CTY TNHH MTV SẢN XUẤT THƯƠNG MẠI DỊCH VỤ TÂM PHÁT</option>
+                                <option value="Minh Khang - Intelhouse">Minh Khang - Intelhouse</option>
+                                <option value="CTY TNHH GIẢI PHÁP NHÀ THÔNG MINH CHUYÊN NGHIỆP TOZ">CTY TNHH GIẢI PHÁP NHÀ THÔNG MINH CHUYÊN NGHIỆP TOZ</option>
+                                <option value="CTY TNHH TM DV GIẢI PHÁP IOT TƯỜNG PHÁT">CTY TNHH TM DV GIẢI PHÁP IOT TƯỜNG PHÁT</option>
+                                <option value="CTY TNHH 247 ĐỒNG THÁP">CTY TNHH 247 ĐỒNG THÁP</option>
+                                <option value="Công ty CP công nghệ xây dựng Đà Lạt">Công ty CP công nghệ xây dựng Đà Lạt</option>
+                                <option value="Hòa T&S">Hòa T&S</option>
+                                <option value="Công ty TNHH đầu tư xây dựng KING HOUSE">Công ty TNHH đầu tư xây dựng KING HOUSE</option>
+                                <option value="Anh Biên">Anh Biên</option>
+                                <option value="CT Quang Hòa Bình Phước">CT Quang Hòa Bình Phước</option>
+                                <option value="LUMI VPMN">LUMI VPMN</option>
+                                <option value="Trương Công Tín">Trương Công Tín</option>
+                                <option value="CTY TNHH ATECKCO">CTY TNHH ATECKCO</option>
+                                <option value="Hiếu Hạnh">Hiếu Hạnh</option>
+                                <option value="Tin Học Huy Bảo">Tin Học Huy Bảo</option>
+                                <option value="Lumi Hoàng Anh">Lumi Hoàng Anh</option>
+                                <option value="Kim Tiến Khang">Kim Tiến Khang</option>
+                                <option value="CTY TNHH TM-DV-TK-XD TRANG THANH">CTY TNHH TM-DV-TK-XD TRANG THANH</option>
+                                <option value="CTY TNHH Gấu Vua">CTY TNHH Gấu Vua</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="distributorPhone">Số điện thoại</label>
+                            <input type="tel" id="distributorPhone" placeholder="0901234567">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="distributorEmail">Email nhà phân phối</label>
+                        <input type="email" id="distributorEmail" placeholder="npp@lumi.vn">
+                    </div>
+                    <div class="form-group">
+                        <label for="errorDescription">Mô tả lỗi *</label>
+                        <textarea id="errorDescription" rows="3" placeholder="Mô tả chi tiết lỗi của sản phẩm..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repairStatus">Trạng thái sửa chữa</label>
+                            <select id="repairStatus">
+                                <option value="not-started">Chưa sửa</option>
+                                <option value="in-progress">Đang sửa</option>
+                                <option value="completed">Đã sửa xong</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="shippingStatus">Trạng thái vận chuyển</label>
+                            <select id="shippingStatus">
+                                <option value="not-sent">Chưa gửi</option>
+                                <option value="waiting-shipper">Chờ shipper</option>
+                                <option value="shipped">Đã gửi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estimatedCompletion">Dự kiến hoàn thành</label>
+                            <input type="date" id="estimatedCompletion">
+                        </div>
+                        <div class="form-group">
+                            <label for="partsCost">Chi phí linh kiện (VNĐ)</label>
+                            <input type="number" id="partsCost" placeholder="100000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repairNotes">Ghi chú sửa chữa</label>
+                        <textarea id="repairNotes" rows="3" placeholder="Ghi chú về quá trình sửa chữa..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelProductBtn">Hủy</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span id="submitBtnText">Thêm sản phẩm</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
