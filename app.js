@@ -237,6 +237,7 @@ function getOverallStatus(repairStatus, shippingStatus) {
 }
 
 function showElement(elementId) {
+  closeAllModals(); // Đóng tất cả modal trước khi mở modal mới
   const element = document.getElementById(elementId)
   if (element) {
     element.classList.remove("hidden")
@@ -373,15 +374,50 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Đảm bảo chỉ một modal được mở tại một thời điểm
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.classList.add('hidden');
+    modal.classList.remove('fade-in');
+  });
+}
+
 // Main Application Class
 class LumiWarrantySystem {
   constructor() {
-    this.products = [...mockProducts]
-    this.currentUser = null
-    this.editingProduct = null
-    this.filteredProducts = [...this.products]
-
-    this.init()
+    // Load từ localStorage nếu có, nếu không thì lấy mockProducts
+    const savedProducts = loadFromLocalStorage("lumiProducts");
+    let products = Array.isArray(savedProducts) ? savedProducts : [...mockProducts];
+    // Đảm bảo tất cả sản phẩm đều có đủ trường mới
+    products = products.map((p) => ({
+      id: p.id,
+      dateReceived: p.dateReceived || "",
+      viettelTrackingCode: p.viettelTrackingCode || "",
+      deviceQuantity: p.deviceQuantity || 1,
+      deviceType: p.deviceType || "",
+      distributor: p.distributor || "",
+      distributorAddress: p.distributorAddress || "",
+      errorType: p.errorType || "",
+      errorDescription: p.errorDescription || "",
+      repairStatus: p.repairStatus || "not-started",
+      estimatedCompletion: p.estimatedCompletion || "",
+      shippingStatus: p.shippingStatus || "not-sent",
+      partsCost: typeof p.partsCost === 'number' ? p.partsCost : 0,
+      createdAt: p.createdAt || new Date().toISOString(),
+      // Các trường cũ giữ lại nếu cần
+      productCode: p.productCode || "",
+      deviceName: p.deviceName || "",
+      repairNotes: p.repairNotes || "",
+      distributorPhone: p.distributorPhone || "",
+      distributorEmail: p.distributorEmail || "",
+    }));
+    // Lưu lại nếu có cập nhật cấu trúc
+    saveToLocalStorage("lumiProducts", products);
+    this.products = products;
+    this.currentUser = null;
+    this.editingProduct = null;
+    this.filteredProducts = [...this.products];
+    this.init();
   }
 
   init() {
@@ -412,7 +448,8 @@ class LumiWarrantySystem {
 
     // Admin functionality
     document.getElementById("adminBtn").addEventListener("click", () => {
-      showElement("adminModal")
+      closeAllModals();
+      showElement("adminModal");
     })
 
     document.getElementById("closeModal").addEventListener("click", () => {
@@ -534,7 +571,7 @@ class LumiWarrantySystem {
             <div style="font-size: 1.5rem; font-weight: 800; letter-spacing: 0.5px;">${overallStatus.status}</div>
             <div style="font-size: 1.1rem; font-weight: 500; opacity: 0.95; margin-top: 0.25rem;">${overallStatus.description}</div>
           </div>
-          <div style="font-size: 1.1rem; font-weight: 600; opacity: 0.9; text-align: right; min-width: 180px;">
+          <div style="font-size: 1.1rem; font-weight: 600; opacity: 0.9; text-align: right, min-width: 180px;">
             Mã đơn: <span style="font-family: monospace; background: rgba(255,255,255,0.18); padding: 0.25rem 0.75rem; border-radius: 1rem;">${product.viettelTrackingCode}</span>
           </div>
         </div>
@@ -634,7 +671,17 @@ class LumiWarrantySystem {
     showNotification("Đã đăng xuất thành công!", "success")
   }
 
-  // --- Thống kê đơn hàng theo ngày (Admin) ---
+  showAdminPanel() {
+    hideElement("adminModal");
+    document.querySelector(".main-content").classList.add("hidden");
+    document.querySelector(".app-footer").classList.add("hidden");
+    showElement("adminPanel");
+    this.updateAdminStats();
+    this.renderProductsList();
+    this.bindOrderStatsByDate(); // Thêm dòng này để gắn sự kiện thống kê theo ngày
+  }
+
+  // Thống kê đơn hàng theo ngày nhận
   bindOrderStatsByDate() {
     const dateInput = document.getElementById("orderStatsDate");
     if (!dateInput) return;
@@ -660,47 +707,31 @@ class LumiWarrantySystem {
       container.innerHTML = '<div style="color:#888;">Không có đơn hàng nào được nhận trong ngày này.</div>';
       return;
     }
-    // Render bảng
+    // Render bảng mới chỉ với các trường quan trọng
     let html = `<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; background:#fff; border-radius:1rem; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-      <thead style="background:#e0e7ef;">
+      <thead style="background:#00b14f; color:#fff;">
         <tr style="text-align:left;">
           <th style="padding:0.7rem 1rem;">STT</th>
-          <th style="padding:0.7rem 1rem;">Tên sản phẩm</th>
-          <th style="padding:0.7rem 1rem;">Mã sản phẩm</th>
           <th style="padding:0.7rem 1rem;">Mã vận đơn</th>
+          <th style="padding:0.7rem 1rem;">Loại thiết bị</th>
+          <th style="padding:0.7rem 1rem;">Số lượng</th>
           <th style="padding:0.7rem 1rem;">Nhà phân phối</th>
-          <th style="padding:0.7rem 1rem;">Trạng thái sửa</th>
-          <th style="padding:0.7rem 1rem;">Trạng thái vận chuyển</th>
-          <th style="padding:0.7rem 1rem;">Chi phí</th>
+          <th style="padding:0.7rem 1rem;">Ngày nhận hàng</th>
         </tr>
       </thead>
       <tbody>`;
     products.forEach((p, idx) => {
       html += `<tr style="border-bottom:1px solid #e5e7eb;">
         <td style="padding:0.6rem 1rem;">${idx + 1}</td>
-        <td style="padding:0.6rem 1rem; font-weight:600; color:#008c4f;">${p.deviceName}</td>
-        <td style="padding:0.6rem 1rem; font-family:monospace;">${p.productCode}</td>
-        <td style="padding:0.6rem 1rem; font-family:monospace;">${p.viettelTrackingCode}</td>
-        <td style="padding:0.6rem 1rem;">${p.distributor}</td>
-        <td style="padding:0.6rem 1rem;">${getRepairStatusBadge(p.repairStatus)}</td>
-        <td style="padding:0.6rem 1rem;">${getShippingStatusBadge(p.shippingStatus)}</td>
-        <td style="padding:0.6rem 1rem; font-weight:700; color:#006b3d; text-align:right;">${p.repairCost > 0 ? formatCurrency(p.repairCost) : 'Miễn phí'}</td>
+        <td style="padding:0.6rem 1rem; font-family:monospace;">${p.viettelTrackingCode || ""}</td>
+        <td style="padding:0.6rem 1rem;">${p.deviceType || ""}</td>
+        <td style="padding:0.6rem 1rem; text-align:center;">${p.deviceQuantity || 1}</td>
+        <td style="padding:0.6rem 1rem;">${p.distributor || ""}</td>
+        <td style="padding:0.6rem 1rem;">${p.dateReceived ? formatDateShort(p.dateReceived) : ""}</td>
       </tr>`;
     });
     html += '</tbody></table></div>';
     container.innerHTML = html;
-    // Khởi tạo icon nếu có dùng lucide
-    if (window.lucide) window.lucide.createIcons();
-  }
-
-  showAdminPanel() {
-    hideElement("adminModal");
-    document.querySelector(".main-content").classList.add("hidden");
-    document.querySelector(".app-footer").classList.add("hidden");
-    showElement("adminPanel");
-    this.updateAdminStats();
-    this.renderProductsList();
-    this.bindOrderStatsByDate(); // Gọi hàm bind cho thống kê theo ngày
   }
 
   hideAdminPanel() {
@@ -778,7 +809,7 @@ class LumiWarrantySystem {
       <div class="product-card ${isOverdue(product.dateReceived, product.repairStatus) ? "overdue" : ""}">
         <div class="product-card-header">
           <div class="product-card-title">
-            ${product.deviceName}
+            ${product.deviceType}
             ${
               isOverdue(product.dateReceived, product.repairStatus)
                 ? `<span class="badge badge-error">
@@ -788,7 +819,6 @@ class LumiWarrantySystem {
             }
           </div>
           <div class="product-card-codes">
-            <span class="code-badge primary">${product.productCode}</span>
             <span class="code-badge">
               🚚 ${product.viettelTrackingCode}
             </span>
@@ -806,35 +836,24 @@ class LumiWarrantySystem {
               📅 Ngày nhận: <strong>${formatDateShort(product.dateReceived)}</strong>
             </div>
             <div class="product-card-info-item">
-              📍 Nhà phân phối: <strong>${product.distributor}</strong>
+              🔢 Số lượng: <strong>${product.deviceQuantity || 1}</strong>
             </div>
             <div class="product-card-info-item">
-              📞 SĐT: <strong>${product.distributorPhone}</strong>
+              🏷️ Loại thiết bị: <strong>${product.deviceType}</strong>
             </div>
             <div class="product-card-info-item">
-              📧 Email: <strong>${product.distributorEmail}</strong>
+              🏢 Nhà phân phối: <strong>${product.distributor}</strong>
+            </div>
+            <div class="product-card-info-item">
+              📍 Địa chỉ NPP: <strong>${product.distributorAddress}</strong>
+            </div>
+            <div class="product-card-info-item">
+              ⚙️ Trạng thái sửa chữa: <strong>${getRepairStatusBadge(product.repairStatus)}</strong>
             </div>
           </div>
-
-          ${
-            product.repairNotes
-              ? `
-            <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%); border: 1px solid rgba(99, 102, 241, 0.2); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin: var(--spacing-lg) 0;">
-              <div style="display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); color: #6366f1; font-weight: 600;">
-                ⚙️ Ghi chú sửa chữa:
-              </div>
-              <div style="color: #4338ca; font-size: 1.125rem; line-height: 1.6; margin-bottom: 0;">${product.repairNotes}</div>
-            </div>
-          `
-              : ""
-          }
         </div>
 
         <div class="product-card-footer">
-          <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm);">
-            ${getRepairStatusBadge(product.repairStatus)}
-            ${getShippingStatusBadge(product.shippingStatus)}
-          </div>
           <div class="product-card-actions">
             <button class="btn btn-secondary btn-icon" onclick="app.editProduct(${product.id})" title="Chỉnh sửa">
               ✏️
@@ -878,19 +897,23 @@ class LumiWarrantySystem {
   }
 
   populateProductForm(product) {
-    document.getElementById("dateReceived").value = product.dateReceived
-    document.getElementById("productCode").value = product.productCode
-    document.getElementById("deviceName").value = product.deviceName
-    document.getElementById("viettelCode").value = product.viettelTrackingCode
-    document.getElementById("distributor").value = product.distributor
-    document.getElementById("distributorPhone").value = product.distributorPhone
-    document.getElementById("distributorEmail").value = product.distributorEmail
-    document.getElementById("errorDescription").value = product.errorDescription
-    document.getElementById("repairStatus").value = product.repairStatus
-    document.getElementById("shippingStatus").value = product.shippingStatus
-    document.getElementById("estimatedCompletion").value = product.estimatedCompletion
-    document.getElementById("partsCost").value = product.partsCost
-    document.getElementById("repairNotes").value = product.repairNotes || ""
+    document.getElementById("dateReceived").value = product.dateReceived || "";
+    document.getElementById("viettelCode").value = product.viettelTrackingCode || "";
+    document.getElementById("deviceQuantity").value = product.deviceQuantity || 1;
+    document.getElementById("deviceType").value = product.deviceType || "";
+    document.getElementById("distributorSearch").value = product.distributor || "";
+    document.getElementById("distributorAddress").value = product.distributorAddress || "";
+    document.getElementById("errorType").value = product.errorType || "";
+    document.getElementById("errorDescription").value = product.errorDescription || "";
+    document.getElementById("repairStatus").value = product.repairStatus || "not-started";
+    if (document.getElementById("estimatedCompletion"))
+      document.getElementById("estimatedCompletion").value = product.estimatedCompletion || "";
+    if (document.getElementById("shippingStatus"))
+      document.getElementById("shippingStatus").value = product.shippingStatus || "not-sent";
+    if (document.getElementById("partsCost"))
+      document.getElementById("partsCost").value = product.partsCost || 0;
+    // Ẩn/hiện các trường theo trạng thái sửa chữa
+    // ...có thể bổ sung logic nếu cần...
   }
 
   resetProductForm() {
@@ -905,62 +928,68 @@ class LumiWarrantySystem {
   }
 
   handleProductSubmit(e) {
-    e.preventDefault()
-
+    e.preventDefault();
     const productData = {
       dateReceived: document.getElementById("dateReceived").value,
-      productCode: document.getElementById("productCode").value,
-      deviceName: document.getElementById("deviceName").value,
       viettelTrackingCode: document.getElementById("viettelCode").value,
-      distributor: document.getElementById("distributor").value,
-      distributorPhone: document.getElementById("distributorPhone").value,
-      distributorEmail: document.getElementById("distributorEmail").value,
+      deviceQuantity: Number.parseInt(document.getElementById("deviceQuantity").value) || 1,
+      deviceType: document.getElementById("deviceType").value,
+      distributor: document.getElementById("distributorSearch").value,
+      distributorAddress: document.getElementById("distributorAddress").value,
+      errorType: document.getElementById("errorType").value,
       errorDescription: document.getElementById("errorDescription").value,
       repairStatus: document.getElementById("repairStatus").value,
-      shippingStatus: document.getElementById("shippingStatus").value,
-      estimatedCompletion: document.getElementById("estimatedCompletion").value,
-      partsCost: Number.parseInt(document.getElementById("partsCost").value) || 0,
-      repairNotes: document.getElementById("repairNotes").value,
-    }
-
-    productData.repairCost = productData.partsCost
-
+      estimatedCompletion: document.getElementById("estimatedCompletion") ? document.getElementById("estimatedCompletion").value : "",
+      shippingStatus: document.getElementById("shippingStatus") ? document.getElementById("shippingStatus").value : "",
+      partsCost: Number.parseInt(document.getElementById("partsCost") ? document.getElementById("partsCost").value : 0) || 0,
+    };
     if (this.editingProduct) {
-      const index = this.products.findIndex((p) => p.id === this.editingProduct.id)
+      const index = this.products.findIndex((p) => p.id === this.editingProduct.id);
       if (index !== -1) {
-        this.products[index] = { ...this.products[index], ...productData }
-        showNotification("Cập nhật sản phẩm thành công!", "success")
+        this.products[index] = { ...this.products[index], ...productData };
+        showNotification("Cập nhật sản phẩm thành công!", "success");
       }
     } else {
       const newProduct = {
         id: Date.now(),
         ...productData,
         createdAt: new Date().toISOString(),
-      }
-      this.products.unshift(newProduct)
-      showNotification("Thêm sản phẩm thành công!", "success")
+      };
+      this.products.unshift(newProduct);
+      showNotification("Thêm sản phẩm thành công!", "success");
     }
-
-    this.hideProductForm()
-    this.updateAdminStats()
-    this.filterProducts()
-    this.populateDistributorFilter()
-  }
-
-  editProduct(id) {
-    const product = this.products.find((p) => p.id === id)
-    if (product) {
-      this.showProductForm(product)
-    }
+    // Lưu lại vào localStorage mỗi lần thêm/sửa
+    saveToLocalStorage("lumiProducts", this.products);
+    this.hideProductForm();
+    this.updateAdminStats();
+    this.filterProducts();
+    this.populateDistributorFilter();
+    this.renderProductsList();
+    setTimeout(() => {
+      const list = document.getElementById("productsList");
+      if (list) list.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 200);
   }
 
   deleteProduct(id) {
     if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) {
-      this.products = this.products.filter((p) => p.id !== id)
-      this.updateAdminStats()
-      this.filterProducts()
-      this.populateDistributorFilter()
-      showNotification("Xóa sản phẩm thành công!", "success")
+      this.products = this.products.filter((p) => p.id !== id);
+      // Lưu lại vào localStorage sau khi xóa
+      saveToLocalStorage("lumiProducts", this.products);
+      this.updateAdminStats();
+      this.filterProducts();
+      this.populateDistributorFilter();
+      showNotification("Xóa sản phẩm thành công!", "success");
+    }
+  }
+
+  editProduct(id) {
+    const product = this.products.find((p) => p.id === id);
+    if (product) {
+      this.showProductForm(product);
+      // Không cần gọi showElement("productModal") nữa vì đã gọi trong showProductForm
+    } else {
+      showNotification("Không tìm thấy sản phẩm để sửa!", "error");
     }
   }
 }
@@ -998,9 +1027,17 @@ notificationStyles.textContent = `
 `
 document.head.appendChild(notificationStyles)
 
-// Initialize application when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  window.app = new LumiWarrantySystem()
-  console.log("🚀 LUMI Warranty System initialized successfully!")
-  console.log("👨‍💻 Tác giả: Trần Minh Thương - Bộ phận T&S Miền Nam")
-})
+// Gộp tất cả các DOMContentLoaded lại để đảm bảo thứ tự khởi tạo
+window.addEventListener("DOMContentLoaded", () => {
+  // Khởi tạo app
+  window.app = new LumiWarrantySystem();
+  console.log("🚀 LUMI Warranty System initialized successfully!");
+  console.log("👨‍💻 Tác giả: Trần Minh Thương - Bộ phận T&S Miền Nam");
+
+  // Xử lý chatbot toggle
+  if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+    showChatbotToggle();
+  } else {
+    hideChatbotToggle();
+  }
+});
